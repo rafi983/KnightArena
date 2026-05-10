@@ -1,36 +1,140 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# KnightArena
 
-## Getting Started
+KnightArena is a modern chess platform built with Next.js, Prisma, NextAuth, and Socket.IO.
+It supports AI play, online real-time multiplayer, friend challenges, and PGN/FEN analysis.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Play vs AI with `easy`, `medium`, and `hard` difficulty modes
+- Online quick matchmaking with live board sync
+- Private invites and friend challenges
+- User accounts (sign up / sign in)
+- Analysis board with:
+  - FEN import
+  - PGN import (paste or `.pgn` file)
+  - PGN export
+  - Move navigation (first/prev/next/last)
+- Time controls and game clocks
+- Multiple board themes
+
+## Tech Stack
+
+- Next.js App Router
+- React + TypeScript
+- Tailwind CSS
+- Prisma ORM + SQLite
+- NextAuth (credentials auth)
+- Socket.IO (real-time gameplay)
+- chess.js (chess rules and move generation)
+
+## Project Structure
+
+- `app/` — pages, components, API routes
+- `app/lib/` — game logic, AI, socket client, auth, prisma client
+- `app/components/` — board/UI components
+- `app/online/` — online multiplayer pages
+- `app/analysis/` — analysis board page
+- `prisma/schema.prisma` — database schema
+- `server.ts` — custom Next + Socket.IO server
+
+## Prerequisites
+
+- Node.js 20+
+- npm 10+
+
+## Environment Variables
+
+Create a `.env` file in the project root:
+
+```env
+DATABASE_URL="file:./prisma/dev.db"
+NEXTAUTH_SECRET="your-secret-key"
+NEXTAUTH_URL="http://localhost:3000"
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Install
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Database Setup
 
-## Learn More
+```bash
+npx prisma generate
+npx prisma migrate dev --name init
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Run the App
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Important
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+For online multiplayer, use the custom server:
 
-## Deploy on Vercel
+```bash
+npm run dev:server
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+If you run only `npm run dev`, Socket.IO multiplayer will not behave correctly.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Open: `http://localhost:3000`
+
+## Scripts
+
+- `npm run dev` — Next.js dev server only
+- `npm run dev:server` — custom server (`server.ts`) with Socket.IO + Next
+- `npm run build` — production build
+- `npm run start` — start production build
+- `npm run start:server` — production custom server with tsx loader
+- `npm run lint` — lint project
+- `npm run db:push` — Prisma schema push
+- `npm run db:studio` — open Prisma Studio
+
+## Online Matchmaking Notes
+
+- Two players must be signed in with different accounts.
+- Quick match pairs by:
+  - same time control
+  - rating window that expands over wait time
+- Friend challenge works through `/friends`.
+
+## PGN Analysis Workflow
+
+1. Export PGN from a finished/ongoing game
+2. Open `/analysis`
+3. Import PGN via paste or `.pgn` upload
+4. Review moves and positions
+5. Export updated PGN if needed
+
+## Troubleshooting
+
+### Stuck on "Finding opponent..."
+
+- Ensure both users selected the same time control
+- Ensure two different accounts are used
+- Ensure app is running with `npm run dev:server`
+
+### Auth warning about NEXTAUTH_URL
+
+Set `NEXTAUTH_URL` in `.env` to your active host (usually `http://localhost:3000`).
+
+### Prisma import/module issues in IDE
+
+Run:
+
+```bash
+npx prisma generate
+```
+
+Then restart TypeScript server/IDE if needed.
+
+## Future Improvements
+
+- Persistent active-game state using Redis
+- Distributed socket scaling
+- Game history page (`My Games`)
+- Engine analysis lines (depth/eval)
+
+---
+
+Built as a full-featured chess demo with production-style architecture.
