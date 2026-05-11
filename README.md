@@ -79,6 +79,16 @@ If you run only `npm run dev`, Socket.IO multiplayer will not behave correctly.
 
 Open: `http://localhost:3000`
 
+## Production Deployment
+
+This app uses a custom persistent Socket.IO server (`server.ts`).
+For production, deploy as two services:
+
+- Vercel: Next.js frontend/API/auth
+- Railway/Render/Fly: realtime Socket.IO server
+
+Use the full checklist in `DEPLOYMENT.md`.
+
 ## Scripts
 
 - `npm run dev` — Next.js dev server only

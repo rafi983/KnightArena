@@ -4,15 +4,19 @@ import { io, Socket } from "socket.io-client";
 
 let socket: Socket | null = null;
 
+function getSocketUrl() {
+  const envUrl = process.env.NEXT_PUBLIC_SOCKET_URL;
+  if (envUrl && envUrl.trim()) return envUrl;
+  if (typeof window !== "undefined") return window.location.origin;
+  return "http://localhost:3000";
+}
+
 export function getSocket(): Socket {
   if (!socket) {
-    socket = io(
-      typeof window !== "undefined" ? window.location.origin : "http://localhost:3000",
-      {
-        autoConnect: false,
-        transports: ["websocket", "polling"],
-      }
-    );
+    socket = io(getSocketUrl(), {
+      autoConnect: false,
+      transports: ["websocket", "polling"],
+    });
   }
   return socket;
 }

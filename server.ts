@@ -57,8 +57,10 @@ app.prepare().then(() => {
     handle(req, res);
   });
 
+  const clientOrigin = process.env.CLIENT_URL || "*";
+
   const io = new SocketIOServer(httpServer, {
-    cors: { origin: "*" },
+    cors: { origin: clientOrigin },
   });
 
   io.on("connection", (socket) => {
