@@ -1,9 +1,9 @@
-# KnightArena Deployment Guide (Vercel + Railway)
+# KnightArena Deployment Guide (Vercel + Render)
 
 This project is split into two runtimes in production:
 
 1. **Vercel** for the Next.js web app (UI + API routes + auth pages)
-2. **Railway** (or Render/Fly) for the persistent Socket.IO realtime server (`server.ts`)
+2. **Render** (or Railway/Fly) for the persistent Socket.IO realtime server (`server.ts`)
 
 A single Vercel deployment is not enough for this repo's custom realtime server architecture.
 
@@ -12,7 +12,7 @@ A single Vercel deployment is not enough for this repo's custom realtime server 
 - A GitHub repo with this project
 - A hosted PostgreSQL database (Neon/Supabase/Vercel Postgres/etc.)
 - A Vercel account
-- A Railway account (or equivalent runtime host)
+- A Render account (or equivalent runtime host)
 
 ## 2) Database setup (PostgreSQL)
 
@@ -41,13 +41,13 @@ Set these in **Project Settings → Environment Variables**:
 - `DATABASE_URL` = your PostgreSQL URL
 - `NEXTAUTH_URL` = your Vercel domain, e.g. `https://your-app.vercel.app`
 - `NEXTAUTH_SECRET` = a long random secret
-- `NEXT_PUBLIC_SOCKET_URL` = your Railway realtime URL, e.g. `https://knightarena-realtime.up.railway.app`
+- `NEXT_PUBLIC_SOCKET_URL` = your Render realtime URL, e.g. `https://knightarena-realtime.onrender.com`
 
-## 4) Deploy realtime server to Railway
+## 4) Deploy realtime server to Render
 
-Create a new Railway service from the same GitHub repo.
+Create a new Render Web Service from the same GitHub repo.
 
-### Railway start command
+### Render start command
 
 Use:
 
@@ -55,10 +55,10 @@ Use:
 npm run start:server
 ```
 
-### Railway environment variables
+### Render environment variables
 
 - `NODE_ENV=production`
-- `PORT` (Railway usually injects this automatically)
+- `PORT` (Render injects this automatically)
 - `CLIENT_URL=https://your-app.vercel.app`
 - `NEXTAUTH_URL=https://your-app.vercel.app`
 - `NEXTAUTH_SECRET=<same secret as Vercel>`
@@ -68,7 +68,7 @@ npm run start:server
 
 After all env vars are set:
 
-1. Trigger/redeploy Railway service
+1. Trigger/redeploy Render service
 2. Trigger/redeploy Vercel project
 
 ## 6) Verify production
@@ -84,18 +84,18 @@ After all env vars are set:
 ### Matchmaking stuck forever
 
 - `NEXT_PUBLIC_SOCKET_URL` missing or wrong in Vercel
-- `CLIENT_URL` missing/wrong in Railway CORS config
-- Railway server not running or crashed
+- `CLIENT_URL` missing/wrong in Render CORS config
+- Render server not running or crashed
 
 ### NextAuth callback issues
 
-- `NEXTAUTH_URL` mismatch between Vercel and Railway
-- `NEXTAUTH_SECRET` mismatch between Vercel and Railway
+- `NEXTAUTH_URL` mismatch between Vercel and Render
+- `NEXTAUTH_SECRET` mismatch between Vercel and Render
 
 ### Prisma runtime errors
 
 - `DATABASE_URL` invalid
-- Migrations not applied (`npx prisma migrate deploy`)
+- Schema not synced (`npx prisma db push`)
 
 ## 8) Optional production hardening
 
